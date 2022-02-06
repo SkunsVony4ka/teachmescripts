@@ -5,12 +5,8 @@ MyMaxWeight = 500; // Max Weight
   runetokill = 21;         // Руна домой.
   runetosell = 33;         // Руна на фарм.
   runetobank = 46;         // Руна на фарм.
-
-
-
-
   
-  procedure ApproachMob();
+procedure ApproachMob();
 begin
   AddToSystemJournal('Approaching mob');
 end;
