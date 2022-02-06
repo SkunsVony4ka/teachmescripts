@@ -1,51 +1,68 @@
-program KillVendors;
+Program KillVendors;
+
 const
-MyMaxWeight = 500; // Max Weight
-// Обозначение позиции руны в рунбуке: 21 - 1, 33 - 2, 46 - 3, 58 - 4, 64 - 5, 73 - 6, 88 - 7, 94 - 8, 1025 - 9.
-  runetokill = 21;         // Руна фарм.
-  runetosell = 33;         // Руна на продажу.
-  runetobank = 46;         // Руна на к банку.
-// Типы:
-maletype =     $0190; // Вендор Мужчина.
-femaletype =   $0191; // Вендор Женщина.
-corpsetype =   $2006;
-runebooktype = $0EFA;
-runebookcolor = $0510;
+  MyMaxWeight = 500; // Max Weight
+  // Обозначение позиции руны в рунбуке: 21 - 1, 33 - 2, 46 - 3, 58 - 4, 64 - 5, 73 - 6, 88 - 7, 94 - 8, 1025 - 9.
+  RuneToKill = 21;         // Руна фарм.
+  RuneToSell = 33;         // Руна на продажу.
+  RuneToBank = 46;         // Руна на к банку.
+  // Типы:
+  MaleType      = $0190; // Вендор Мужчина.
+  FemaleType    = $0191; // Вендор Женщина.
+  CorpseType    = $2006;
+  RunebookType  = $0EFA;
+  RunebookColor = $0510;
+  Loot          = $1539; // Штаны длинные
+  Loot1         = $1517;// Майка
+  Loot2         = $1531; // Юбка длинная
+  Loot3         = $153B; // Короткий фартук
 
-   loot= $1539; // Штаны длинные
-   loot1= $1517;// Майка
-   loot2= $1531; // Юбка длинная
-   loot3= $153B; // Короткий фартук
+var
+ Corpse: Cardinal;  
 
- var
- corpse: cardinal;  
+Procedure Resurrector;
+var MoveSuccess: boolean;
+begin
+  if Dead then
+    begin
+      HelpRequest;//Нажать "Help"
+      Wait(1000);                                  
+      Waitgump('3');//Нажать "Help i am stuck"
+      Wait(1000);
+      Waitgump('2');//Нажать на кнопку города
+      Wait(3000)
+      FindDistance := 10;	
 
-procedure Resurrector;
-BEGIN
-  if dead then
-  begin
-    HelpRequest;//Нажать "Help"
-    wait(1000);                                  
-    waitgump('3');//Нажать "Help i am stuck"
-    wait(1000);
-    waitgump(IntToStr(2));//Нажать на кнопку города
-    wait(3000)
-    FindDistance:=10;
-	
-	while (not moveXYZ(2466, 532, 0, 0, 255, true)) do
-		Wait(1000);
-		
-    wait(1000)
-	
-    while (GetType(Self()) = $0192) or (GetType(Self()) = $0193) do 
-	begin
-      useObject($4001BDF0);
-      wait(1000);
+      // Looks not so stable
+	    // while (not moveXYZ(2466, 532, 0, 0, 255, true)) do
+	    	// Wait(1000);	
+      // Refactoring to have 5 tries, if failed -> send message to system journal
+
+      MoveSuccess := False;
+      for i := 0 to 5 do
+        begin
+          if (MoveXYZ(2466, 532, 0, 0, 255, true)) then
+            begin
+              MoveSuccess := True;
+            end;
+          Wait(1000);
+        end;
+
+      // Halting script if failed to get to location
+      if not MoveSuccess then
+        begin
+          AddToSystemJournal('Failed to move while ressurecting!');
+          Halt;
+        end;
+
+      while (GetType(Self()) = $0192) or (GetType(Self()) = $0193) do 
+	      begin
+          UseObject($4001BDF0);
+          Wait(1000);
+        end;
+      Recal_rb_new(RuneToKill);
+      AttackMob;
     end;
-	
-     recal_rb_new(runetokill);
-    AttackMob;
-  end;
 end;
 
 procedure checkdistance;
