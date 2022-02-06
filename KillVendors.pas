@@ -16,7 +16,9 @@ runebookcolor = $0510;
    loot1= $1517;// Майка
    loot2= $1531; // Юбка длинная
    loot3= $153B; // Короткий фартук
-   
+
+ var
+ corpse: cardinal;  
 
 procedure Resurrector;
 BEGIN
