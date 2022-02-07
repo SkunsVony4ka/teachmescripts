@@ -54,7 +54,7 @@ BEGIN
     AttackMob;
   end;
 end;
-procedure death; forward;
+
 procedure init;
 begin
   // Типы предметов при луте из моба
@@ -75,7 +75,7 @@ begin
   if not connected then connect;          // Подключение
   setpausescriptondisconnectstatus(true); // Включить паузу при дисконнекте.
   setarstatus(true);                      // Включить реконнект.
-  while not connected do wait(500);       // Ждем подключения.
+  while not connected do Wait(500);       // Ждем подключения.
 
   addtosystemjournal('Персонаж в игре. Макрос запущен.');
   finddistance := 5;    // Дальность поиска пк и монстров.
@@ -87,6 +87,7 @@ begin
   SetRunMountTimer(205);
   SetWalkMountTimer(405);
 end;
+procedure death; forward;
 
 procedure FullDisconnect;
 begin
@@ -99,7 +100,7 @@ procedure checksave;
 //////////////////////////////////////////// Проверка сохранения мира.
 begin
   if injournalbetweentimes('World is saving now...', now-(1.0/(24*60*2)), now) > -1 then
-  repeat wait(500); until injournalbetweentimes('World data saved in ', now-(1.0/(24*60*2)), now) > 1;
+  repeat Wait(500); until injournalbetweentimes('World data saved in ', now-(1.0/(24*60*2)), now) > 1;
   checklag(5000);
 end;
 
@@ -114,7 +115,7 @@ procedure checkweight;
 
 begin
 if getquantity(findtype(batwingstype, backpack)) >= maxbatwings then begin
-  while not newmovexy(coord[high(coord)].x, coord[high(coord)].y, false, 1, isRunningWhileWalking) do wait(300);
+  while not newmovexy(coord[high(coord)].x, coord[high(coord)].y, false, 1, isRunningWhileWalking) do Wait(300);
   if dead then exit;
   recall(runetohome, false);
   if dead then exit;
@@ -144,7 +145,7 @@ begin
   x := getx(self);
   y := gety(self);
   stringlist := tstringlist.create;
-  wait(600);
+  Wait(600);
 
   //until isgump;
 
@@ -158,7 +159,7 @@ begin
 
   repeat
     checklag(50000);
-    wait(600);
+    Wait(600);
   until ((x <> getx(self)) AND (y <> gety(self))) OR (injournalbetweentimes('The spell fizzles.', t, now) > -1) OR (t+(1.0/(24*60*6)) < now);
 
   until ((x <> getx(self)) OR (y <> gety(self)));
@@ -176,11 +177,11 @@ begin
     if dead then death;
     checksave;
     UseObject(CorpseID);
-    wait(600);
+    Wait(600);
     for i := 1 to high(mobloottype) do
     if findtype(mobloottype[i], corpseID) > 0 then begin
       moveitem(finditem, 0, backpack, 0, 0, 0);
-      wait(600);
+      Wait(600);
     end;
     ignore(CorpseID);
     if Weight > MWeight then
@@ -189,6 +190,7 @@ begin
     end;
   end;
 end;
+
 procedure kill;
 begin
   FindDistance:=5;
@@ -200,7 +202,7 @@ begin
   FindType($0190,ground);
   n:=findcount;
   //AddToSystemJournal('Найдено '+IntToStr(n)+' '+GetName(FindItem));
-  wait (600);
+  Wait (600);
   FindType($0190,ground);
   if n>0 then
   begin
@@ -213,22 +215,22 @@ begin
       attack(FindItem);
       if GetDistance(FindItem)>0 then
       newMoveXY(GetX(FindItem),GetY(FindItem),true,1,true);
-      wait(100);
+      Wait(100);
       if dead then death;
     end;
     if FindType($2006,ground)>0 then
     begin
       FindType($2006,ground);
       newMoveXY(GetX(FindItem),GetY(FindItem),true,1,true);
-      wait(300);
+      Wait(300);
       Unload;
       Check_Hidden;
       FindType($2006,ground)
       ignore(FindItem)
     end;
-    wait(100);
+    Wait(100);
   end;
-  wait(100);
+  Wait(100);
 end;
 Begin
   init;
@@ -242,13 +244,13 @@ Begin
     while gethp(self)>1 do
     begin
       kill;
-      wait(100);
+      Wait(100);
     end;
 
     if dead then death;
-    wait(100);
+    Wait(100);
   end;
-  wait(100);
+  Wait(100);
 end.
 
 
